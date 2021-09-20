@@ -1,114 +1,122 @@
-<p align="center">
-  <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
-</p>
-
-<h3 align="center">Project Title</h3>
+<h1 align="center">API Lances de Leilão</h1>
 
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
 
 ---
 
-<p align="center"> Few lines describing your project.
+<p align="center"> Projeto de lances de Leilão feito em JAVA
     <br> 
 </p>
 
-## 📝 Table of Contents
+## 📝 SUMÁRIO
 
-- [About](#about)
-- [Getting Started](#getting_started)
-- [Deployment](#deployment)
-- [Usage](#usage)
-- [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
+- [Sobre o Projeto](#about)
+- [Iniciando o Projeto](#getting_started)
+- [Testes](#tests)
+- [Ferramentas Utilizadas](#built_using)
+- [Autor](#authors)
 
-## 🧐 About <a name = "about"></a>
+## 🧐 SOBRE O PROJETO <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+API lances de leilões é um modelo de cadastro para leilões online em JAVA, utilizando CRUD, interface web e Banco de Dados.
 
-## 🏁 Getting Started <a name = "getting_started"></a>
+## 🏁 INICIANDO O PROJETO <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+Faça o download do projeto e rode via terminal ou em sua IDE de preferência.
 
-### Prerequisites
+### REQUISITOS
 
-What things you need to install the software and how to install them.
+- GIT;
+- JAVA 16;
+- VS CODE OU IDE (ECLIPSE OU INTELLIJ)
+- JUNIT (PARA TESTES - JÁ IMPLEMENTADO DENTRO DO PROJETO)
 
-```
-Give examples
-```
+## 🔧 TESTES <a name = "tests"></a>
 
-### Installing
+Os testes de integração foram implementados utilizando as classes <b>DAO</b> e automatizado com padrão da pirâmide chamado Services, integrando junto ao BD.
 
-A step by step series of examples that tell you how to get a development env running.
+### IMPLEMENTANDO OS TESTES
 
-Say what the step will be
+Os Testes estão dentro do pacote chamado "tests" do projeto.
 
-```
-Give the example
-```
+Foram utilzados para criar os testes as classes <b>DAO</b> do projeto e assim padronizar conforme as boas práticas.
 
-And repeat
+O Padrão DAO (DATA ACCESS OBJECT) é um padrão de comunicação com Banco de Dados, por isso possui algumas anotações da JPA para que o BD reconheça o que a classe está gerando. Para o teste, não utilizarei as anotações de teste da JPA.
+
+Para que possamos melhorar a performance e manutenção a longo prazo do teste, utilizamos o @BeforeEach e @AfterEach, fazendo com que o código seja mais legível e gere menos desgate na hora da manutenção 
 
 ```
-until finished
+@BeforeEach
+	public void beforeEach() {
+		this.em = JPAUtil.getEntityManager();
+		this.dao = new LeilaoDao(em);
+		em.getTransaction().begin();
+	}
+
+	@AfterEach
+	public void afterEach() {
+		em.getTransaction().rollback();
+	}
+```
+Para Cada Teste dentro da classe DAO, utilizarei o padrão Builder, que fará com que apenas implemente os métodos, sem que precisemos utilizar mais código e tenha maior dificuldade de manutenção.
+
 ```
 
-End with an example of getting some data out of the system or using it for a little demo.
+  @Test
+	void deveriaEncontrarUsuarioCadastrado() {
+		Usuario usuario = new UsuarioBuilder()
+			.comNome("Fulano")
+			.comEmail("fulano@email.com")
+			.comSenha("12345678")
+			.criar();
+		em.persist(usuario);
+		
+		Usuario encontrado = this.dao.buscarPorUsername(usuario.getNome());
+		Assert.assertNotNull(encontrado);
+	}
 
-## 🔧 Running the tests <a name = "tests"></a>
+	@Test
+	void naoDeveriaEncontrarUsuarioNaoCadastrado() {
+		Usuario usuario = new UsuarioBuilder()
+			.comNome("Fulano")
+			.comEmail("fulano@email.com")
+			.comSenha("12345678")
+			.criar();
+		em.persist(usuario);
 
-Explain how to run the automated tests for this system.
+		Assert.assertThrows(NoResultException.class, () -> this.dao.buscarPorUsername("beltrano"));
+	}
 
-### Break down into end to end tests
+	@Test
+	void deveriaRemoverUmUsuario() {
+		Usuario usuario = new UsuarioBuilder()
+			.comNome("Fulano")
+			.comEmail("fulano@email.com")
+			.comSenha("12345678")
+			.criar();
+		
+		em.persist(usuario);
+		dao.deletar(usuario);
 
-Explain what these tests test and why
+		Assert.assertThrows(
+			NoResultException.class, 
+			() -> this.dao.buscarPorUsername(usuario.getNome())
+		);
+	}
 
 ```
-Give an example
-```
+## ⛏️ Ferramentas Utilizadas <a name = "built_using"></a>
 
-### And coding style tests
+- [GIT](https://git-scm.com/) - Versionamento de Código
+- [H2](https://www.h2database.com/html/main.html) - Database
+- [Java 16](https://www.oracle.com/java/technologies/downloads/#java16) - Linguagem Utilizada
+- [Editor de Texto](https://code.visualstudio.com/) - Editor de Texto
 
-Explain what these tests test and why
+## ✍️ Autor <a name = "authors"></a>
 
-```
-Give an example
-```
-
-## 🎈 Usage <a name="usage"></a>
-
-Add notes about how to use the system.
-
-## 🚀 Deployment <a name = "deployment"></a>
-
-Add additional notes about how to deploy this on a live system.
-
-## ⛏️ Built Using <a name = "built_using"></a>
-
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
-
-## ✍️ Authors <a name = "authors"></a>
-
-- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
-
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
-
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+- [@andersonVallada](https://github.com/andersonVallada) - Implementação de Testes
+- Rodrigo Ferreira - Idéia e Criação do Projeto
