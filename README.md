@@ -118,5 +118,4 @@ Para Cada Teste dentro da classe DAO, utilizarei o padrão Builder, que fará co
 
 ## ✍️ Autor <a name = "authors"></a>
 
-- [@andersonVallada](https://github.com/andersonVallada) - Implementação de Testes
-- Rodrigo Ferreira - Idéia e Criação do Projeto
+- [@andersonVallada](https://github.com/andersonVallada)
